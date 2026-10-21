@@ -80,7 +80,7 @@ export function ContactsTable({ contacts, selectedId, onOpen }: Props) {
                 <Value>{c.owner}</Value>
               </td>
               <td className="px-3 py-2">
-                <Labels labels={c.labels} />
+                <Labels labels={c.labels} nowrap />
               </td>
               <td className="px-3 py-2">
                 <StageBadge stage={c.stage} />

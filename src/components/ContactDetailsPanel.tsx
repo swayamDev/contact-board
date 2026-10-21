@@ -57,7 +57,7 @@ export function ContactDetailsPanel({ contact, onSave, onClose }: Props) {
           onClose();
         }
       }}
-      className="flex w-[400px] shrink-0 flex-col border-l border-zinc-200 bg-white"
+      className="z-20 flex w-[400px] max-w-full shrink-0 flex-col border-l border-zinc-200 bg-white max-xl:absolute max-xl:inset-y-0 max-xl:right-0 max-xl:shadow-xl"
     >
       <div className="flex items-start justify-between gap-3 border-b border-zinc-200 px-5 py-4">
         <div className="flex items-center gap-3">

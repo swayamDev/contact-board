@@ -60,7 +60,7 @@ function App() {
   return (
     <div className="flex h-screen bg-white text-zinc-900">
       <Sidebar />
-      <div className="flex min-w-0 flex-1">
+      <div className="relative flex min-w-0 flex-1">
         <main className="flex min-w-0 flex-1 flex-col">
           <AppHeader
             shown={visible.length}

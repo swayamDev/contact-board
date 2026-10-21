@@ -59,10 +59,16 @@ export function Value({ children }: { children?: string | null }) {
   return <>{text}</>;
 }
 
-export function Labels({ labels }: { labels: string[] }) {
+export function Labels({
+  labels,
+  nowrap = false,
+}: {
+  labels: string[];
+  nowrap?: boolean;
+}) {
   if (labels.length === 0) return <Value />;
   return (
-    <span className="flex flex-wrap gap-1">
+    <span className={`flex gap-1 ${nowrap ? "flex-nowrap" : "flex-wrap"}`}>
       {labels.map((l) => (
         <LabelTag key={l}>{l}</LabelTag>
       ))}
