@@ -15,7 +15,7 @@ A small contacts-management prototype with two synchronized views of one dataset
 
 ## Tech stack
 
-React 19, TypeScript (strict), Vite, Tailwind CSS v4, [Phosphor Icons](https://phosphoricons.com/) (`@phosphor-icons/react`).
+React 19, TypeScript (strict), Vite, Tailwind CSS v4, Vitest + Testing Library (dev), [Phosphor Icons](https://phosphoricons.com/) (`@phosphor-icons/react`).
 
 ## Getting started
 
@@ -27,6 +27,7 @@ npm run dev        # start the dev server
 npm run build      # type-check and build for production
 npm run preview    # serve the production build
 npm run lint       # run ESLint
+npm test           # run unit/integration tests
 ```
 
 ## Project structure
@@ -43,6 +44,8 @@ src/
     stageStyles.ts    # stage colours
   types/contact.ts    # Contact, Stage union, ContactDraft
   App.tsx             # owns shared state
+  App.test.tsx        # behaviour tests
+  test/setup.ts
 ```
 
 ## Design decisions and trade-offs
@@ -56,7 +59,13 @@ src/
 
 ## Testing
 
-I checked these in headless Chromium with a throwaway script (not committed as a test suite): row/card open the right contact, Cancel and Escape discard edits, a stage change moves the card between board columns, repeated saves create no duplicates, the view is preserved after closing, focus returns to the opener, and search filters both views. `npm run lint` and `npm run build` pass. There are no committed unit or end-to-end tests.
+```bash
+npm test
+```
+
+Vitest and Testing Library (jsdom) cover the core flows in `src/App.test.tsx`: table and board show the same contacts, an empty board group, missing values render as `—`, a saved stage change moves the card, Cancel / X / Escape discard drafts, repeated saves create no duplicates and reopen with the latest values, focus returns to the opener, and search filters both views.
+
+I also checked the UI by hand in headless Chromium, including a 1024px-wide layout. Visual layout and real keyboard tabbing order are not covered by automated tests.
 
 ## Known limitations
 
@@ -68,7 +77,7 @@ I checked these in headless Chromium with a throwaway script (not committed as a
 
 ## Next improvements
 
-- Add automated tests (Vitest and Testing Library for state logic, Playwright for the flows above).
+- Add Playwright end-to-end and visual regression tests.
 - Drag-and-drop between board columns.
 - Persist to `localStorage` and add contact creation.
 - Sorting and filters by stage, owner and label.
