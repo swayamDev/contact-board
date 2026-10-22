@@ -23,7 +23,7 @@ React 19, TypeScript (strict), Vite, Tailwind CSS v4, `@dnd-kit/core` (drag-and-
 
 ## Getting started
 
-Prerequisites: Node.js 20+ and npm or pnpm (`pnpm-lock.yaml` is committed and up to date; with npm, a plain `npm install` works).
+Prerequisites: Node.js **22.22 or newer** (or 24.15+) and npm or pnpm. Vite and ESLint alone run on Node 20.19+, so `dev`, `build` and `lint` work there, but the test runner (Vitest 5 and jsdom 30) needs Node 22.22+. `pnpm-lock.yaml` is committed and up to date; with npm, a plain `npm install` works.
 
 ```bash
 npm install
