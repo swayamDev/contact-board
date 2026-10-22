@@ -30,23 +30,28 @@ export function Sidebar() {
         <ul className="flex flex-col gap-0.5">
           {NAV.map(({ label, Icon, current }) => (
             <li key={label}>
-              <a
-                href="#"
-                onClick={(e) => e.preventDefault()}
-                aria-current={current ? "page" : undefined}
-                className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm focus-visible:outline-2 focus-visible:outline-indigo-600 ${
-                  current
-                    ? "bg-zinc-200/60 font-medium text-zinc-900"
-                    : "text-zinc-600 hover:bg-zinc-100"
-                }`}
-              >
-                <Icon
-                  size={16}
-                  weight={current ? "fill" : "regular"}
-                  aria-hidden
-                />
-                {label}
-              </a>
+              {current ? (
+                <a
+                  href="#contacts"
+                  onClick={(e) => e.preventDefault()}
+                  aria-current="page"
+                  className="flex items-center gap-2 rounded-md bg-zinc-200/60 px-2 py-1.5 text-sm font-medium text-zinc-900 focus-visible:outline-2 focus-visible:outline-indigo-600"
+                >
+                  <Icon size={16} weight="fill" aria-hidden />
+                  {label}
+                </a>
+              ) : (
+                // Placeholder destinations: not interactive, so not tab stops.
+                <button
+                  type="button"
+                  disabled
+                  title="Not part of this prototype"
+                  className="flex w-full cursor-not-allowed items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm text-zinc-500"
+                >
+                  <Icon size={16} aria-hidden />
+                  {label}
+                </button>
+              )}
             </li>
           ))}
         </ul>

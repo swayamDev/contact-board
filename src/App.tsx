@@ -82,6 +82,25 @@ function App() {
     setCreating(true);
   }
 
+  // Escape closes whichever panel is open, without saving, wherever focus is.
+  // (The panel is non-modal, so focus may be back in the table or board.)
+  const panelOpen = selectedId !== null || creating;
+  useEffect(() => {
+    if (!panelOpen) return;
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key !== "Escape" || e.defaultPrevented) return;
+      if (creating) {
+        returnFocusId.current = "add";
+        setCreating(false);
+      } else {
+        returnFocusId.current = selectedId;
+        setSelectedId(null);
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [panelOpen, creating, selectedId]);
+
   // After a panel closes, return focus to the row/card that opened it
   // (or to the Add contact button when there is no row left to focus).
   useEffect(() => {

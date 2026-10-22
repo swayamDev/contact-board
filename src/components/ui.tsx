@@ -51,9 +51,12 @@ export function Value({ children }: { children?: string | null }) {
   const text = children?.trim();
   if (!text) {
     return (
-      <span className="text-zinc-300" aria-label="Not set">
-        —
-      </span>
+      <>
+        <span aria-hidden className="text-zinc-400">
+          —
+        </span>
+        <span className="sr-only">Not set</span>
+      </>
     );
   }
   return <>{text}</>;

@@ -19,13 +19,15 @@ interface Props {
 function ReadOnlyField({
   label,
   children,
+  wide = false,
 }: {
   label: string;
   children: React.ReactNode;
+  wide?: boolean;
 }) {
   return (
-    <div>
-      <dt className="text-xs font-medium text-zinc-500">{label}</dt>
+    <div className={wide ? "col-span-2" : undefined}>
+      <dt className="text-xs font-medium text-zinc-600">{label}</dt>
       <dd className="mt-0.5 text-sm text-zinc-900">{children}</dd>
     </div>
   );
@@ -38,6 +40,9 @@ export function ContactDetailsPanel({
   onClose,
 }: Props) {
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const deleteRef = useRef<HTMLButtonElement>(null);
+  const keepRef = useRef<HTMLButtonElement>(null);
+  const wasConfirming = useRef(false);
   // Only the fields the user has touched are stored. Everything else follows the
   // saved contact, so a drag-and-drop stage change never wipes unsaved notes.
   // Cancel / close / Escape discard this state by unmounting the panel.
@@ -54,20 +59,26 @@ export function ContactDetailsPanel({
     stageRef.current?.focus();
   }, []);
 
+  // The Delete button is swapped for a confirmation row, which would otherwise
+  // drop focus to <body>. Move focus to the safe option, and back again on Keep.
+  useEffect(() => {
+    if (confirmingDelete) {
+      keepRef.current?.focus();
+      wasConfirming.current = true;
+    } else if (wasConfirming.current) {
+      deleteRef.current?.focus();
+      wasConfirming.current = false;
+    }
+  }, [confirmingDelete]);
+
   const dirty =
     draft.stage !== contact.stage || draft.notes !== (contact.notes ?? "");
 
   return (
-    <aside
+    <div
       role="dialog"
       aria-modal="false"
       aria-label={`Details for ${contact.name}`}
-      onKeyDown={(e) => {
-        if (e.key === "Escape") {
-          e.stopPropagation();
-          onClose();
-        }
-      }}
       className={PANEL_CLASS}
     >
       <div className="flex items-start justify-between gap-3 border-b border-zinc-200 px-5 py-4">
@@ -107,16 +118,12 @@ export function ContactDetailsPanel({
             <ReadOnlyField label="Owner">
               <Value>{contact.owner}</Value>
             </ReadOnlyField>
-            <div className="col-span-2">
-              <ReadOnlyField label="Email">
-                <Value>{contact.email}</Value>
-              </ReadOnlyField>
-            </div>
-            <div className="col-span-2">
-              <ReadOnlyField label="Labels">
-                <Labels labels={contact.labels} />
-              </ReadOnlyField>
-            </div>
+            <ReadOnlyField label="Email" wide>
+              <Value>{contact.email}</Value>
+            </ReadOnlyField>
+            <ReadOnlyField label="Labels" wide>
+              <Labels labels={contact.labels} />
+            </ReadOnlyField>
           </dl>
 
           <div className="border-t border-zinc-100 pt-5">
@@ -134,7 +141,7 @@ export function ContactDetailsPanel({
                 onChange={(e) =>
                   setEdits((d) => ({ ...d, stage: e.target.value as Stage }))
                 }
-                className="w-full appearance-none rounded-lg border border-zinc-200 bg-white py-2 pr-8 pl-3 text-sm text-zinc-900 focus-visible:border-indigo-500 focus-visible:outline-2 focus-visible:outline-indigo-600/30"
+                className="w-full appearance-none rounded-lg border border-zinc-200 bg-white py-2 pr-8 pl-3 text-sm text-zinc-900 focus-visible:border-indigo-500 focus-visible:outline-2 focus-visible:outline-indigo-600"
               >
                 {STAGES.map((s) => (
                   <option key={s} value={s}>
@@ -165,7 +172,7 @@ export function ContactDetailsPanel({
                 setEdits((d) => ({ ...d, notes: e.target.value }))
               }
               placeholder="Add a note…"
-              className="mt-1 w-full resize-y rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus-visible:border-indigo-500 focus-visible:outline-2 focus-visible:outline-indigo-600/30"
+              className="mt-1 w-full resize-y rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-500 focus-visible:border-indigo-500 focus-visible:outline-2 focus-visible:outline-indigo-600"
             />
           </div>
         </div>
@@ -179,7 +186,7 @@ export function ContactDetailsPanel({
             <div className="flex gap-2">
               <button
                 type="button"
-                autoFocus
+                ref={keepRef}
                 onClick={() => setConfirmingDelete(false)}
                 className={BTN_SECONDARY}
               >
@@ -198,6 +205,7 @@ export function ContactDetailsPanel({
           <div className="flex items-center justify-between gap-2 border-t border-zinc-200 px-5 py-3">
             <button
               type="button"
+              ref={deleteRef}
               onClick={() => setConfirmingDelete(true)}
               className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-red-600"
             >
@@ -215,6 +223,6 @@ export function ContactDetailsPanel({
           </div>
         )}
       </form>
-    </aside>
+    </div>
   );
 }

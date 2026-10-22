@@ -101,16 +101,10 @@ export function NewContactPanel({ onCreate, onClose }: Props) {
   );
 
   return (
-    <aside
+    <div
       role="dialog"
       aria-modal="false"
       aria-label="New contact"
-      onKeyDown={(e) => {
-        if (e.key === "Escape") {
-          e.stopPropagation();
-          onClose();
-        }
-      }}
       className={PANEL_CLASS}
     >
       <div className="flex items-center justify-between border-b border-zinc-200 px-5 py-4">
@@ -136,7 +130,7 @@ export function NewContactPanel({ onCreate, onClose }: Props) {
               htmlFor={`${uid}-name`}
               className="text-xs font-medium text-zinc-500"
             >
-              Name <span className="text-zinc-400">(required)</span>
+              Name <span className="text-zinc-500">(required)</span>
             </label>
             <input
               id={`${uid}-name`}
@@ -168,7 +162,7 @@ export function NewContactPanel({ onCreate, onClose }: Props) {
               htmlFor={`${uid}-labels`}
               className="text-xs font-medium text-zinc-500"
             >
-              Labels <span className="text-zinc-400">(comma separated)</span>
+              Labels <span className="text-zinc-500">(comma separated)</span>
             </label>
             <input
               id={`${uid}-labels`}
@@ -230,6 +224,6 @@ export function NewContactPanel({ onCreate, onClose }: Props) {
           </button>
         </div>
       </form>
-    </aside>
+    </div>
   );
 }

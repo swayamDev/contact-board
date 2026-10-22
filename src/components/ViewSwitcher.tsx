@@ -31,7 +31,7 @@ export function ViewSwitcher({
             className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-indigo-600 ${
               active
                 ? "bg-white text-zinc-900 shadow-sm"
-                : "text-zinc-500 hover:text-zinc-800"
+                : "text-zinc-600 hover:text-zinc-900"
             }`}
           >
             <Icon size={16} weight={active ? "bold" : "regular"} aria-hidden />

@@ -34,7 +34,7 @@ export function ContactsTable({ contacts, selectedId, onOpen }: Props) {
             <th
               key={c}
               scope="col"
-              className="px-3 py-2 text-xs font-medium whitespace-nowrap text-zinc-500 first:pl-6"
+              className="px-3 py-2 text-xs font-medium whitespace-nowrap text-zinc-600 first:pl-6"
             >
               {c}
             </th>
@@ -47,25 +47,27 @@ export function ContactsTable({ contacts, selectedId, onOpen }: Props) {
           return (
             <tr
               key={c.id}
-              data-contact-id={c.id}
-              tabIndex={0}
-              aria-selected={selected}
+              // Mouse convenience: the whole row is clickable. The name button
+              // below is the keyboard/screen-reader target, and its click bubbles
+              // up to this single handler.
               onClick={() => onOpen(c.id)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  onOpen(c.id);
-                }
-              }}
-              className={`cursor-pointer border-b border-zinc-100 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-600 ${
-                selected ? "bg-indigo-50/60" : "hover:bg-zinc-50"
+              className={`cursor-pointer border-b border-zinc-100 ${
+                selected
+                  ? "bg-indigo-50/60"
+                  : "focus-within:bg-zinc-50 hover:bg-zinc-50"
               }`}
             >
               <td className="px-3 py-2 pl-6 whitespace-nowrap">
-                <span className="flex items-center gap-2 font-medium text-zinc-900">
+                <button
+                  type="button"
+                  data-contact-id={c.id}
+                  aria-haspopup="dialog"
+                  aria-expanded={selected}
+                  className="flex items-center gap-2 rounded-sm font-medium text-zinc-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
                   <Avatar name={c.name} />
                   {c.name}
-                </span>
+                </button>
               </td>
               <td className="px-3 py-2 whitespace-nowrap text-zinc-700">
                 <Value>{c.company}</Value>

@@ -21,7 +21,7 @@ export function AppHeader({
   onAdd,
 }: Props) {
   return (
-    <header className="flex items-center justify-between gap-3 border-b border-zinc-200 px-6 py-4">
+    <header className="flex h-[67px] shrink-0 items-center justify-between gap-3 border-b border-zinc-200 px-6 py-4">
       <div className="flex shrink-0 items-baseline gap-2">
         <h1 className="text-lg font-semibold tracking-tight text-zinc-900">
           Contacts
@@ -43,7 +43,7 @@ export function AppHeader({
             value={query}
             onChange={(e) => onQueryChange(e.target.value)}
             placeholder="Search contacts"
-            className="w-full rounded-lg border border-zinc-200 bg-white py-1.5 pr-3 pl-8 text-sm text-zinc-900 placeholder:text-zinc-400 focus-visible:border-indigo-500 focus-visible:outline-2 focus-visible:outline-indigo-600/30"
+            className="w-full rounded-lg border border-zinc-200 bg-white py-1.5 pr-3 pl-8 text-sm text-zinc-900 placeholder:text-zinc-500 focus-visible:border-indigo-500 focus-visible:outline-2 focus-visible:outline-indigo-600"
           />
         </label>
         <ViewSwitcher view={view} onChange={onViewChange} />

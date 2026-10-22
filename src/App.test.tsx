@@ -39,7 +39,7 @@ describe("contacts app", () => {
   it("renders missing values as a dash, never undefined/null", () => {
     render(<App />);
     expect(document.body.textContent).not.toMatch(/undefined|null|\[object/);
-    expect(screen.getAllByLabelText("Not set").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Not set").length).toBeGreaterThan(0);
   });
 
   it("saves a stage change and moves the card on the board", async () => {
@@ -100,7 +100,7 @@ describe("contacts app", () => {
     render(<App />);
     await user.click(screen.getByText("Elena Petrova"));
     await user.keyboard("{Escape}");
-    expect(screen.getByText("Elena Petrova").closest("tr")).toHaveFocus();
+    expect(screen.getByText("Elena Petrova").closest("button")).toHaveFocus();
   });
 
   it("search filters both views from the same data", async () => {
