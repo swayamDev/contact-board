@@ -1,4 +1,4 @@
-import { MagnifyingGlass } from "@phosphor-icons/react";
+import { MagnifyingGlass, Plus } from "@phosphor-icons/react";
 import { ViewSwitcher, type View } from "./ViewSwitcher";
 
 interface Props {
@@ -8,6 +8,7 @@ interface Props {
   onViewChange: (v: View) => void;
   query: string;
   onQueryChange: (q: string) => void;
+  onAdd: () => void;
 }
 
 export function AppHeader({
@@ -17,6 +18,7 @@ export function AppHeader({
   onViewChange,
   query,
   onQueryChange,
+  onAdd,
 }: Props) {
   return (
     <header className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-200 px-6 py-4">
@@ -45,6 +47,15 @@ export function AppHeader({
           />
         </label>
         <ViewSwitcher view={view} onChange={onViewChange} />
+        <button
+          type="button"
+          data-add-contact
+          onClick={onAdd}
+          className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-indigo-600"
+        >
+          <Plus size={16} weight="bold" aria-hidden />
+          Add contact
+        </button>
       </div>
     </header>
   );

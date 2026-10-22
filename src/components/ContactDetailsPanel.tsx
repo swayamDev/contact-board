@@ -1,16 +1,18 @@
 import { useEffect, useId, useRef, useState } from "react";
-import { CaretDown, X } from "@phosphor-icons/react";
+import { CaretDown, Trash, X } from "@phosphor-icons/react";
 import {
   STAGES,
   type Contact,
   type ContactDraft,
   type Stage,
 } from "../types/contact";
+import { BTN_PRIMARY, BTN_SECONDARY, PANEL_CLASS } from "./panelStyles";
 import { Avatar, Labels, Value } from "./ui";
 
 interface Props {
   contact: Contact;
   onSave: (id: string, draft: ContactDraft) => void;
+  onDelete: (id: string) => void;
   onClose: () => void;
 }
 
@@ -29,7 +31,13 @@ function ReadOnlyField({
   );
 }
 
-export function ContactDetailsPanel({ contact, onSave, onClose }: Props) {
+export function ContactDetailsPanel({
+  contact,
+  onSave,
+  onDelete,
+  onClose,
+}: Props) {
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
   // Draft lives here, so Cancel / close / Escape simply discard it.
   const [draft, setDraft] = useState<ContactDraft>({
     stage: contact.stage,
@@ -57,7 +65,7 @@ export function ContactDetailsPanel({ contact, onSave, onClose }: Props) {
           onClose();
         }
       }}
-      className="z-20 flex w-[400px] max-w-full shrink-0 flex-col border-l border-zinc-200 bg-white max-xl:absolute max-xl:inset-y-0 max-xl:right-0 max-xl:shadow-xl"
+      className={PANEL_CLASS}
     >
       <div className="flex items-start justify-between gap-3 border-b border-zinc-200 px-5 py-4">
         <div className="flex items-center gap-3">
@@ -159,22 +167,50 @@ export function ContactDetailsPanel({ contact, onSave, onClose }: Props) {
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-2 border-t border-zinc-200 px-5 py-3">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-indigo-600"
+        {confirmingDelete ? (
+          <div
+            role="alert"
+            className="flex items-center justify-between gap-2 border-t border-zinc-200 bg-red-50 px-5 py-3"
           >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={!dirty}
-            className="rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-400"
-          >
-            Save changes
-          </button>
-        </div>
+            <p className="text-sm text-red-800">Delete {contact.name}?</p>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                autoFocus
+                onClick={() => setConfirmingDelete(false)}
+                className={BTN_SECONDARY}
+              >
+                Keep
+              </button>
+              <button
+                type="button"
+                onClick={() => onDelete(contact.id)}
+                className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-red-600"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between gap-2 border-t border-zinc-200 px-5 py-3">
+            <button
+              type="button"
+              onClick={() => setConfirmingDelete(true)}
+              className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-red-600"
+            >
+              <Trash size={16} aria-hidden />
+              Delete
+            </button>
+            <div className="flex gap-2">
+              <button type="button" onClick={onClose} className={BTN_SECONDARY}>
+                Cancel
+              </button>
+              <button type="submit" disabled={!dirty} className={BTN_PRIMARY}>
+                Save changes
+              </button>
+            </div>
+          </div>
+        )}
       </form>
     </aside>
   );
