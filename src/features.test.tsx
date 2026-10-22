@@ -1,8 +1,10 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import App from "./App";
+import { ContactDetailsPanel } from "./components/ContactDetailsPanel";
 import { initialContacts } from "./data/contacts";
+import { getDropStage } from "./lib/board";
 import { STORAGE_KEY, loadContacts } from "./lib/storage";
 
 const dataRows = () =>
@@ -127,69 +129,64 @@ describe("delete contact", () => {
 });
 
 describe("drag and drop", () => {
-  it("moves a card to another column and updates the table and storage", async () => {
-    const user = userEvent.setup();
-    render(<App />);
-    await user.click(screen.getByRole("button", { name: "Board" }));
+  const [first] = initialContacts; // a Lead
 
-    const card = screen.getByText("Amara Okafor").closest("li")!;
-    const data: Record<string, string> = {};
-    const dataTransfer = {
-      setData: (k: string, v: string) => (data[k] = v),
-      getData: (k: string) => data[k] ?? "",
-      effectAllowed: "",
-      dropEffect: "",
-    };
-    fireEvent.dragStart(card, { dataTransfer });
-    fireEvent.dragOver(column("Customer"), { dataTransfer });
-    fireEvent.drop(column("Customer"), { dataTransfer });
-    fireEvent.dragEnd(card, { dataTransfer });
-
-    expect(
-      within(column("Customer")).getByText("Amara Okafor"),
-    ).toBeInTheDocument();
-    expect(
-      within(column("Lead")).queryByText("Amara Okafor"),
-    ).not.toBeInTheDocument();
-    expect(
-      stored().find((c: { name: string }) => c.name === "Amara Okafor").stage,
-    ).toBe("Customer");
-
-    await user.click(screen.getByRole("button", { name: "Table" }));
-    const row = screen.getByText("Amara Okafor").closest("tr")!;
-    expect(within(row).getByText("Customer")).toBeInTheDocument();
-    expect(dataRows()).toHaveLength(initialContacts.length);
+  it("getDropStage returns the new stage only for a real move", () => {
+    expect(getDropStage(initialContacts, first.id, "Customer")).toBe(
+      "Customer",
+    );
+    expect(getDropStage(initialContacts, first.id, first.stage)).toBeNull(); // same column
+    expect(getDropStage(initialContacts, first.id, null)).toBeNull(); // dropped outside
+    expect(getDropStage(initialContacts, first.id, undefined)).toBeNull();
+    expect(getDropStage(initialContacts, first.id, "Archived")).toBeNull(); // not a stage
+    expect(getDropStage(initialContacts, "missing-id", "Customer")).toBeNull();
   });
 
-  it("keeps unsaved notes in an open panel when its card is dragged to another stage", async () => {
+  it("keeps unsaved notes, and follows the saved stage, when the contact changes under an open panel", async () => {
     const user = userEvent.setup();
-    render(<App />);
-    await user.click(screen.getByRole("button", { name: "Board" }));
-    await user.click(screen.getByText("Amara Okafor"));
-    const notes = screen.getByLabelText("Notes");
-    await user.clear(notes);
-    await user.type(notes, "unsaved thought");
+    const onSave = vi.fn();
+    const { rerender } = render(
+      <ContactDetailsPanel
+        contact={first}
+        onSave={onSave}
+        onDelete={vi.fn()}
+        onClose={vi.fn()}
+      />,
+    );
+    await user.clear(screen.getByLabelText("Notes"));
+    await user.type(screen.getByLabelText("Notes"), "unsaved thought");
 
-    const data: Record<string, string> = {};
-    const dataTransfer = {
-      setData: (k: string, v: string) => (data[k] = v),
-      getData: (k: string) => data[k] ?? "",
-      effectAllowed: "",
-      dropEffect: "",
-    };
-    const card = screen.getAllByText("Amara Okafor")[0].closest("li")!;
-    fireEvent.dragStart(card, { dataTransfer });
-    fireEvent.drop(column("Customer"), { dataTransfer });
-
+    // A drag-and-drop elsewhere moves this contact to Customer.
+    rerender(
+      <ContactDetailsPanel
+        contact={{ ...first, stage: "Customer" }}
+        onSave={onSave}
+        onDelete={vi.fn()}
+        onClose={vi.fn()}
+      />,
+    );
     expect(screen.getByLabelText("Notes")).toHaveValue("unsaved thought");
     expect(screen.getByLabelText("Stage")).toHaveValue("Customer");
-    // Moving via drag is already saved; only the notes edit is pending.
+
     await user.click(screen.getByRole("button", { name: "Save changes" }));
-    expect(
-      stored().find((c: { name: string }) => c.name === "Amara Okafor"),
-    ).toMatchObject({
+    expect(onSave).toHaveBeenCalledWith(first.id, {
       stage: "Customer",
       notes: "unsaved thought",
     });
+  });
+
+  it("board cards are real buttons that open the panel with Enter", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "Board" }));
+    const card = document.querySelector<HTMLElement>(
+      `[data-contact-id="${first.id}"]`,
+    )!;
+    expect(card.tagName).toBe("BUTTON");
+    card.focus();
+    await user.keyboard("{Enter}");
+    expect(
+      screen.getByRole("dialog", { name: `Details for ${first.name}` }),
+    ).toBeInTheDocument();
   });
 });
