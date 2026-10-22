@@ -18,7 +18,7 @@ export function ViewSwitcher({
     <div
       role="group"
       aria-label="Switch view"
-      className="inline-flex rounded-lg bg-zinc-100 p-0.5"
+      className="inline-flex shrink-0 rounded-lg bg-zinc-100 p-0.5"
     >
       {OPTIONS.map(({ value, label, Icon }) => {
         const active = view === value;

@@ -110,7 +110,7 @@ function App() {
             onQueryChange={setQuery}
             onAdd={startCreating}
           />
-          <div className="min-h-0 flex-1 overflow-auto">
+          <div className="relative min-h-0 flex-1 overflow-auto">
             {view === "table" ? (
               <ContactsTable
                 contacts={visible}
@@ -138,8 +138,7 @@ function App() {
         )}
         {selected && (
           <ContactDetailsPanel
-            // Re-key on stage so a drag-and-drop move refreshes the draft's baseline.
-            key={`${selected.id}:${selected.stage}`}
+            key={selected.id}
             contact={selected}
             onSave={saveContact}
             onDelete={deleteContact}

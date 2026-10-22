@@ -23,7 +23,7 @@ React 19, TypeScript (strict), Vite, Tailwind CSS v4, native HTML5 drag-and-drop
 
 ## Getting started
 
-Prerequisites: Node.js 20+ and npm (or pnpm).
+Prerequisites: Node.js 20+ and npm or pnpm (`pnpm-lock.yaml` is committed and up to date; with npm, a plain `npm install` works).
 
 ```bash
 npm install
@@ -69,13 +69,13 @@ src/
 npm test
 ```
 
-Vitest and Testing Library (jsdom), 14 tests across `src/App.test.tsx` and `src/features.test.tsx`:
+Vitest and Testing Library (jsdom), 15 tests across `src/App.test.tsx` and `src/features.test.tsx`:
 
 - Core: same contacts in both views, empty board group, `—` for missing values, saved stage change moves the card, Cancel / X / Escape discard drafts, repeated saves create no duplicates, focus returns to the opener, search filters both views.
 - Persistence: edits survive a remount, and corrupt, invalid or duplicate-id storage falls back to sample data.
 - Add: name is required, the new contact appears in both views and storage, Cancel / Escape add nothing.
 - Delete: confirmation can be undone, and a confirmed delete removes the contact from both views and storage.
-- Drag-and-drop: a drop moves the card and updates the table and storage (simulated drag events).
+- Drag-and-drop: a drop moves the card and updates the table and storage, and unsaved notes in an open panel survive a drag (simulated drag events).
 
 I also checked drag-and-drop with a real mouse drag, reload persistence, add, delete and corrupt storage in headless Chromium by hand. Visual layout and real keyboard tab order are not covered by automated tests.
 

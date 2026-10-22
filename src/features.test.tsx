@@ -160,4 +160,36 @@ describe("drag and drop", () => {
     expect(within(row).getByText("Customer")).toBeInTheDocument();
     expect(dataRows()).toHaveLength(initialContacts.length);
   });
+
+  it("keeps unsaved notes in an open panel when its card is dragged to another stage", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "Board" }));
+    await user.click(screen.getByText("Amara Okafor"));
+    const notes = screen.getByLabelText("Notes");
+    await user.clear(notes);
+    await user.type(notes, "unsaved thought");
+
+    const data: Record<string, string> = {};
+    const dataTransfer = {
+      setData: (k: string, v: string) => (data[k] = v),
+      getData: (k: string) => data[k] ?? "",
+      effectAllowed: "",
+      dropEffect: "",
+    };
+    const card = screen.getAllByText("Amara Okafor")[0].closest("li")!;
+    fireEvent.dragStart(card, { dataTransfer });
+    fireEvent.drop(column("Customer"), { dataTransfer });
+
+    expect(screen.getByLabelText("Notes")).toHaveValue("unsaved thought");
+    expect(screen.getByLabelText("Stage")).toHaveValue("Customer");
+    // Moving via drag is already saved; only the notes edit is pending.
+    await user.click(screen.getByRole("button", { name: "Save changes" }));
+    expect(
+      stored().find((c: { name: string }) => c.name === "Amara Okafor"),
+    ).toMatchObject({
+      stage: "Customer",
+      notes: "unsaved thought",
+    });
+  });
 });

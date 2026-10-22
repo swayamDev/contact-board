@@ -38,11 +38,14 @@ export function ContactDetailsPanel({
   onClose,
 }: Props) {
   const [confirmingDelete, setConfirmingDelete] = useState(false);
-  // Draft lives here, so Cancel / close / Escape simply discard it.
-  const [draft, setDraft] = useState<ContactDraft>({
-    stage: contact.stage,
-    notes: contact.notes ?? "",
-  });
+  // Only the fields the user has touched are stored. Everything else follows the
+  // saved contact, so a drag-and-drop stage change never wipes unsaved notes.
+  // Cancel / close / Escape discard this state by unmounting the panel.
+  const [edits, setEdits] = useState<Partial<ContactDraft>>({});
+  const draft: ContactDraft = {
+    stage: edits.stage ?? contact.stage,
+    notes: edits.notes ?? contact.notes ?? "",
+  };
   const stageRef = useRef<HTMLSelectElement>(null);
   const stageId = useId();
   const notesId = useId();
@@ -129,7 +132,7 @@ export function ContactDetailsPanel({
                 ref={stageRef}
                 value={draft.stage}
                 onChange={(e) =>
-                  setDraft((d) => ({ ...d, stage: e.target.value as Stage }))
+                  setEdits((d) => ({ ...d, stage: e.target.value as Stage }))
                 }
                 className="w-full appearance-none rounded-lg border border-zinc-200 bg-white py-2 pr-8 pl-3 text-sm text-zinc-900 focus-visible:border-indigo-500 focus-visible:outline-2 focus-visible:outline-indigo-600/30"
               >
@@ -159,7 +162,7 @@ export function ContactDetailsPanel({
               rows={6}
               value={draft.notes}
               onChange={(e) =>
-                setDraft((d) => ({ ...d, notes: e.target.value }))
+                setEdits((d) => ({ ...d, notes: e.target.value }))
               }
               placeholder="Add a note…"
               className="mt-1 w-full resize-y rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus-visible:border-indigo-500 focus-visible:outline-2 focus-visible:outline-indigo-600/30"

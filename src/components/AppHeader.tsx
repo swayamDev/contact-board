@@ -21,8 +21,8 @@ export function AppHeader({
   onAdd,
 }: Props) {
   return (
-    <header className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-200 px-6 py-4">
-      <div className="flex items-baseline gap-2">
+    <header className="flex items-center justify-between gap-3 border-b border-zinc-200 px-6 py-4">
+      <div className="flex shrink-0 items-baseline gap-2">
         <h1 className="text-lg font-semibold tracking-tight text-zinc-900">
           Contacts
         </h1>
@@ -30,8 +30,8 @@ export function AppHeader({
           {shown === total ? total : `${shown} of ${total}`}
         </span>
       </div>
-      <div className="flex items-center gap-3">
-        <label className="relative">
+      <div className="flex min-w-0 items-center justify-end gap-3">
+        <label className="relative max-w-56 min-w-28 flex-1">
           <span className="sr-only">Search contacts</span>
           <MagnifyingGlass
             size={16}
@@ -43,7 +43,7 @@ export function AppHeader({
             value={query}
             onChange={(e) => onQueryChange(e.target.value)}
             placeholder="Search contacts"
-            className="w-56 rounded-lg border border-zinc-200 bg-white py-1.5 pr-3 pl-8 text-sm text-zinc-900 placeholder:text-zinc-400 focus-visible:border-indigo-500 focus-visible:outline-2 focus-visible:outline-indigo-600/30"
+            className="w-full rounded-lg border border-zinc-200 bg-white py-1.5 pr-3 pl-8 text-sm text-zinc-900 placeholder:text-zinc-400 focus-visible:border-indigo-500 focus-visible:outline-2 focus-visible:outline-indigo-600/30"
           />
         </label>
         <ViewSwitcher view={view} onChange={onViewChange} />
@@ -51,7 +51,7 @@ export function AppHeader({
           type="button"
           data-add-contact
           onClick={onAdd}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-indigo-600"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium whitespace-nowrap text-white hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-indigo-600"
         >
           <Plus size={16} weight="bold" aria-hidden />
           Add contact
