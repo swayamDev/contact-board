@@ -34,7 +34,7 @@ export function ContactsTable({ contacts, selectedId, onOpen }: Props) {
             <th
               key={c}
               scope="col"
-              className="px-3 py-2 text-xs font-medium whitespace-nowrap text-zinc-600 first:pl-6"
+              className="px-3 py-2 text-xs font-medium whitespace-nowrap text-zinc-600 first:sticky first:left-0 first:z-20 first:bg-white first:pl-6 first:shadow-[inset_-1px_0_0_#f4f4f5] pointer-coarse:py-3"
             >
               {c}
             </th>
@@ -53,11 +53,11 @@ export function ContactsTable({ contacts, selectedId, onOpen }: Props) {
               onClick={() => onOpen(c.id)}
               className={`cursor-pointer border-b border-zinc-100 ${
                 selected
-                  ? "bg-indigo-50/60"
-                  : "focus-within:bg-zinc-50 hover:bg-zinc-50"
+                  ? "bg-indigo-50"
+                  : "bg-white focus-within:bg-zinc-50 hover:bg-zinc-50"
               }`}
             >
-              <td className="px-3 py-2 pl-6 whitespace-nowrap">
+              <td className="sticky left-0 z-1 bg-inherit px-3 py-2 pl-6 whitespace-nowrap shadow-[inset_-1px_0_0_#f4f4f5] pointer-coarse:py-3">
                 <button
                   type="button"
                   data-contact-id={c.id}
@@ -69,16 +69,16 @@ export function ContactsTable({ contacts, selectedId, onOpen }: Props) {
                   {c.name}
                 </button>
               </td>
-              <td className="px-3 py-2 whitespace-nowrap text-zinc-700">
+              <td className="px-3 py-2 whitespace-nowrap text-zinc-700 pointer-coarse:py-3">
                 <Value>{c.company}</Value>
               </td>
-              <td className="px-3 py-2 whitespace-nowrap text-zinc-600">
+              <td className="px-3 py-2 whitespace-nowrap text-zinc-600 pointer-coarse:py-3">
                 <Value>{c.email}</Value>
               </td>
-              <td className="px-3 py-2 whitespace-nowrap text-zinc-600">
+              <td className="px-3 py-2 whitespace-nowrap text-zinc-600 pointer-coarse:py-3">
                 <Value>{c.role}</Value>
               </td>
-              <td className="px-3 py-2 whitespace-nowrap text-zinc-600">
+              <td className="px-3 py-2 whitespace-nowrap text-zinc-600 pointer-coarse:py-3">
                 <Value>{c.owner}</Value>
               </td>
               <td className="px-3 py-2">
@@ -88,7 +88,7 @@ export function ContactsTable({ contacts, selectedId, onOpen }: Props) {
                 <StageBadge stage={c.stage} />
               </td>
               <td
-                className="max-w-[260px] truncate px-3 py-2 text-zinc-500"
+                className="max-w-[260px] truncate px-3 py-2 text-zinc-600 pointer-coarse:py-3"
                 title={c.notes || undefined}
               >
                 <Value>{c.notes}</Value>

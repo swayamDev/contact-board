@@ -11,6 +11,8 @@ import {
 interface Props {
   onCreate: (contact: Contact) => void;
   onClose: () => void;
+  /** Below the xl breakpoint the panel is a drawer and the page behind it is inert. */
+  modal?: boolean;
 }
 
 interface Form {
@@ -37,7 +39,7 @@ const EMPTY: Form = {
 
 const optional = (v: string) => v.trim() || undefined;
 
-export function NewContactPanel({ onCreate, onClose }: Props) {
+export function NewContactPanel({ onCreate, onClose, modal = false }: Props) {
   const [form, setForm] = useState<Form>(EMPTY);
   const [submitted, setSubmitted] = useState(false);
   const nameRef = useRef<HTMLInputElement>(null);
@@ -103,7 +105,7 @@ export function NewContactPanel({ onCreate, onClose }: Props) {
   return (
     <div
       role="dialog"
-      aria-modal="false"
+      aria-modal={modal}
       aria-label="New contact"
       className={PANEL_CLASS}
     >
@@ -113,7 +115,7 @@ export function NewContactPanel({ onCreate, onClose }: Props) {
           type="button"
           onClick={onClose}
           aria-label="Close new contact form"
-          className="rounded-md p-1 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 focus-visible:outline-2 focus-visible:outline-indigo-600"
+          className="inline-flex items-center justify-center rounded-md p-1 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 focus-visible:outline-2 focus-visible:outline-indigo-600 pointer-coarse:size-11"
         >
           <X size={18} aria-hidden />
         </button>

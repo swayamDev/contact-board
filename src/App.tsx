@@ -1,12 +1,14 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AppHeader } from "./components/AppHeader";
 import { ContactDetailsPanel } from "./components/ContactDetailsPanel";
 import { ContactsBoard } from "./components/ContactsBoard";
+import { ContactsList } from "./components/ContactsList";
 import { ContactsTable } from "./components/ContactsTable";
 import { NewContactPanel } from "./components/NewContactPanel";
 import { Sidebar } from "./components/Sidebar";
 import type { View } from "./components/ViewSwitcher";
 import { initialContacts } from "./data/contacts";
+import { useMediaQuery } from "./hooks/useMediaQuery";
 import { loadContacts, saveContacts } from "./lib/storage";
 import type { Contact, ContactDraft, Stage } from "./types/contact";
 
@@ -21,6 +23,10 @@ function App() {
   const [creating, setCreating] = useState(false);
   const [query, setQuery] = useState("");
   const returnFocusId = useRef<string | null>(null);
+
+  // Same breakpoints as Tailwind: md = 48rem, xl = 80rem.
+  const phone = useMediaQuery("(width < 48rem)"); // Table view becomes a card list
+  const drawer = useMediaQuery("(width < 80rem)"); // details panel becomes a modal drawer
 
   useEffect(() => {
     saveContacts(contacts);
@@ -82,24 +88,28 @@ function App() {
     setCreating(true);
   }
 
-  // Escape closes whichever panel is open, without saving, wherever focus is.
-  // (The panel is non-modal, so focus may be back in the table or board.)
+  // Close whichever panel is open without saving (Escape, backdrop click).
   const panelOpen = selectedId !== null || creating;
+  const dismissPanel = useCallback(() => {
+    if (creating) {
+      returnFocusId.current = "add";
+      setCreating(false);
+    } else {
+      returnFocusId.current = selectedId;
+      setSelectedId(null);
+    }
+  }, [creating, selectedId]);
+
+  // Escape works wherever focus is. (Beside the content the panel is non-modal,
+  // so focus may be back in the table or board.)
   useEffect(() => {
     if (!panelOpen) return;
     function onKeyDown(e: KeyboardEvent) {
-      if (e.key !== "Escape" || e.defaultPrevented) return;
-      if (creating) {
-        returnFocusId.current = "add";
-        setCreating(false);
-      } else {
-        returnFocusId.current = selectedId;
-        setSelectedId(null);
-      }
+      if (e.key === "Escape" && !e.defaultPrevented) dismissPanel();
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [panelOpen, creating, selectedId]);
+  }, [panelOpen, dismissPanel]);
 
   // After a panel closes, return focus to the row/card that opened it
   // (or to the Add contact button when there is no row left to focus).
@@ -116,10 +126,14 @@ function App() {
   }, [selectedId, creating, view, contacts]);
 
   return (
-    <div className="flex h-screen bg-white text-zinc-900">
-      <Sidebar />
+    <div className="flex h-dvh bg-white text-zinc-900">
+      {/* While the drawer is open, the page behind it is inert (unfocusable, unclickable). */}
+      <Sidebar inert={drawer && panelOpen} />
       <div className="relative flex min-w-0 flex-1">
-        <main className="flex min-w-0 flex-1 flex-col">
+        <main
+          inert={drawer && panelOpen}
+          className="flex min-w-0 flex-1 flex-col"
+        >
           <AppHeader
             shown={visible.length}
             total={contacts.length}
@@ -131,11 +145,19 @@ function App() {
           />
           <div className="relative min-h-0 flex-1 overflow-auto">
             {view === "table" ? (
-              <ContactsTable
-                contacts={visible}
-                selectedId={selectedId}
-                onOpen={openContact}
-              />
+              phone ? (
+                <ContactsList
+                  contacts={visible}
+                  selectedId={selectedId}
+                  onOpen={openContact}
+                />
+              ) : (
+                <ContactsTable
+                  contacts={visible}
+                  selectedId={selectedId}
+                  onOpen={openContact}
+                />
+              )
             ) : (
               <ContactsBoard
                 contacts={visible}
@@ -146,13 +168,18 @@ function App() {
             )}
           </div>
         </main>
+        {drawer && panelOpen && (
+          <div
+            aria-hidden
+            onClick={dismissPanel}
+            className="fixed inset-0 z-20 bg-zinc-900/30"
+          />
+        )}
         {creating && (
           <NewContactPanel
             onCreate={createContact}
-            onClose={() => {
-              returnFocusId.current = "add";
-              setCreating(false);
-            }}
+            onClose={dismissPanel}
+            modal={drawer}
           />
         )}
         {selected && (
@@ -162,6 +189,7 @@ function App() {
             onSave={saveContact}
             onDelete={deleteContact}
             onClose={closePanel}
+            modal={drawer}
           />
         )}
       </div>

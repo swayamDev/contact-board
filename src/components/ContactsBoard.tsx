@@ -70,7 +70,7 @@ function BoardColumn({
     <section
       ref={setNodeRef}
       aria-labelledby={`col-${stage}`}
-      className={`flex min-w-0 flex-1 flex-col rounded-xl p-2 transition-colors ${
+      className={`flex w-[80vw] max-w-72 shrink-0 flex-col rounded-xl p-2 transition-colors md:w-auto md:max-w-none md:min-w-0 md:flex-1 xl:max-w-[24rem] ${
         isOver ? "bg-indigo-50 ring-2 ring-indigo-300" : "bg-zinc-50"
       }`}
     >
@@ -165,7 +165,7 @@ export function ContactsBoard({ contacts, selectedId, onOpen, onMove }: Props) {
       onDragEnd={handleDragEnd}
       onDragCancel={() => setActiveId(null)}
     >
-      <div className="flex h-full min-w-[960px] gap-4 p-6">
+      <div className="flex h-full w-max min-w-full gap-3 p-4 md:w-auto md:min-w-[960px] md:gap-4 md:p-6">
         {STAGES.map((stage) => (
           <BoardColumn
             key={stage}

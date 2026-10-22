@@ -1,10 +1,12 @@
 import type { Contact } from "../types/contact";
-import { Avatar, Labels, Value } from "./ui";
+import { Avatar, Labels, StageBadge, Value } from "./ui";
 
 interface Props {
   contact: Contact;
   selected?: boolean;
   onOpen?: (id: string) => void;
+  /** Show the stage badge (the board omits it: the column already says it). */
+  showStage?: boolean;
   /** Non-interactive copy shown under the pointer while dragging. */
   preview?: boolean;
 }
@@ -13,6 +15,7 @@ export function ContactCard({
   contact,
   selected = false,
   onOpen,
+  showStage = false,
   preview = false,
 }: Props) {
   return (
@@ -30,9 +33,10 @@ export function ContactCard({
     >
       <span className="flex items-center gap-2">
         <Avatar name={contact.name} />
-        <span className="truncate text-sm font-medium text-zinc-900">
+        <span className="min-w-0 flex-1 truncate text-sm font-medium text-zinc-900">
           {contact.name}
         </span>
+        {showStage && <StageBadge stage={contact.stage} />}
       </span>
       <span className="text-xs text-zinc-500">
         <Value>{contact.role}</Value> · <Value>{contact.company}</Value>
