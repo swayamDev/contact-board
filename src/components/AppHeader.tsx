@@ -26,12 +26,11 @@ export function AppHeader({
   return (
     <header className="grid shrink-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-3 border-b border-zinc-200 px-4 py-3 md:flex md:px-6 md:py-4">
       <div className="flex min-w-0 items-center gap-2.5 md:shrink-0">
-        <span
-          aria-hidden
-          className="flex size-7 shrink-0 items-center justify-center rounded-md bg-indigo-600 text-xs font-bold text-white md:hidden"
-        >
-          C
-        </span>
+        <img
+          src="/logo.png"
+          alt=""
+          className="size-6 shrink-0 rounded-md object-cover md:hidden"
+        />
         <h1 className="text-lg font-semibold tracking-tight text-zinc-900">
           Contacts
         </h1>

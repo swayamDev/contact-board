@@ -19,12 +19,11 @@ export function Sidebar({ inert }: { inert?: boolean }) {
       className="hidden shrink-0 flex-col gap-4 border-r border-zinc-200 bg-zinc-50 p-3 md:flex md:w-16 md:p-2 lg:w-52 lg:p-3"
     >
       <div className="flex items-center gap-2 px-2 pt-1 md:justify-center lg:justify-start">
-        <span
-          aria-hidden
-          className="flex size-6 items-center justify-center rounded-md bg-indigo-600 text-xs font-bold text-white"
-        >
-          C
-        </span>
+        <img
+          src="/logo.png"
+          alt=""
+          className="size-5 rounded-md object-cover"
+        />
         <span className="hidden text-sm font-semibold text-zinc-900 lg:inline">
           Contact Board
         </span>
